@@ -63,6 +63,7 @@
     </button>
     <nav class="site-nav" id="siteNav">
       <a href="#stage">그리기</a>
+      <a href="gallery.html">갤러리</a>
       <a href="#features">기능 소개</a>
       <a href="#about">사이트 소개</a>
       <a href="privacy.html">개인정보처리방침</a>
@@ -150,6 +151,21 @@
             <span>격자선</span>
           </label>
         </div>
+
+        <!-- 애니메이션 프레임(스프라이트) 타임라인 -->
+        <div class="frame-strip" aria-label="애니메이션 프레임 목록">
+          <div class="frame-list" id="frameList"></div>
+          <div class="frame-actions">
+            <button class="btn-ghost small" id="addFrameBtn" title="새 프레임 추가">＋ 프레임</button>
+            <button class="btn-ghost small" id="dupFrameBtn" title="현재 프레임 복제">⧉ 복제</button>
+            <button class="btn-ghost small btn-danger" id="delFrameBtn" title="현재 프레임 삭제">✕ 삭제</button>
+            <span class="frame-sep" aria-hidden="true"></span>
+            <button class="btn-ghost small" id="playBtn" title="애니메이션 재생/정지">▶ 재생</button>
+            <label class="fps-label">FPS
+              <input type="number" id="fpsInput" min="1" max="30" value="8">
+            </label>
+          </div>
+        </div>
       </div>
 
       <!-- 우측: 캔버스 설정 + 다운로드 -->
@@ -182,11 +198,26 @@
           </label>
           <button class="btn-primary" id="downloadJpg">⬇ JPG로 저장</button>
           <button class="btn-secondary" id="downloadPng">⬇ PNG로 저장 (투명 배경)</button>
+          <p class="hint" id="spriteHint">프레임이 2개 이상이면 아래 버튼으로 스프라이트 시트를 저장할 수 있어요.</p>
+          <button class="btn-secondary" id="downloadSprite">⬇ 스프라이트 시트로 저장</button>
+        </div>
+
+        <div class="panel-block">
+          <h2 class="panel-title">커뮤니티에 공유</h2>
+          <p class="hint" style="margin-top:0">공유한 그림은 <a href="gallery.html">갤러리</a>에서 누구나 보고 내려받을 수 있습니다. 부적절한 게시물은 신고가 누적되면 자동으로 숨김 처리됩니다.</p>
+          <label class="scale-label">작품 제목
+            <input type="text" id="shareTitle" maxlength="40" placeholder="예: 우리집 고양이">
+          </label>
+          <label class="scale-label">닉네임 (선택)
+            <input type="text" id="shareAuthor" maxlength="20" placeholder="익명">
+          </label>
+          <button class="btn-primary" id="shareBtn">🌐 갤러리에 공유하기</button>
+          <p class="hint" id="shareStatus" role="status" aria-live="polite"></p>
         </div>
       </div>
     </div>
 
-    <p class="stage-note">그리기 도구 사용법: 캔버스를 클릭하거나 드래그해서 도트를 찍습니다. 모바일에서는 손가락으로 터치해서 그릴 수 있습니다. 작업 중인 그림은 저장 버튼을 누르기 전까지 브라우저 메모리에만 존재하며, 외부 서버로 전송되지 않습니다.</p>
+    <p class="stage-note">그리기 도구 사용법: 캔버스를 클릭하거나 드래그해서 도트를 찍습니다. 모바일에서는 손가락으로 터치해서 그릴 수 있습니다. "＋ 프레임"으로 새 그림을 추가해 애니메이션 스프라이트를 만들고, 재생 버튼으로 미리보기 할 수 있습니다. 저장 버튼을 누르기 전까지 그림은 브라우저 메모리에만 존재하며, "갤러리에 공유하기"를 누르기 전까지는 외부로 전송되지 않습니다.</p>
   </section>
 
   <!-- ===================== 기능 소개 ===================== -->
@@ -213,6 +244,16 @@
         <h3>JPG·PNG 즉시 저장</h3>
         <p>완성한 도트 아트를 4배~32배 고해상도로 확대해 JPG 또는 투명 배경 PNG 파일로 바로 다운로드합니다. 변환 과정도 전부 브라우저 안에서 처리됩니다.</p>
       </article>
+      <article class="stage-card">
+        <span class="stage-num">STAGE 5</span>
+        <h3>애니메이션 스프라이트</h3>
+        <p>프레임을 여러 장 그려서 재생 버튼으로 움직임을 미리 보고, 완성하면 모든 프레임을 하나로 이어붙인 스프라이트 시트 이미지로 저장할 수 있습니다.</p>
+      </article>
+      <article class="stage-card">
+        <span class="stage-num">STAGE 6</span>
+        <h3>커뮤니티 갤러리</h3>
+        <p>완성한 도트 아트를 갤러리에 공유하면 다른 사람들도 구경하고 내려받아 사용할 수 있습니다. 신고가 누적된 게시물은 자동으로 숨김 처리됩니다.</p>
+      </article>
     </div>
   </section>
 
@@ -222,8 +263,8 @@
     <div class="about-body">
       <p><strong>도트프레스(DOT PRESS)</strong>는 누구나 별도의 프로그램 설치나 회원가입 없이, 웹 브라우저만으로 도트 아트(픽셀 아트)를 그릴 수 있도록 만든 무료 온라인 그리기 도구입니다. 오래된 콘솔 게임과 아케이드 화면 특유의 거친 매력을 좋아하는 분들, 이모티콘·아이콘·게임 스프라이트를 직접 만들어보고 싶은 분들, 그리고 픽셀 단위로 그림을 그리는 재미를 처음 느껴보고 싶은 분들을 위해 만들어졌습니다.</p>
       <p>복잡한 설치 과정이나 로그인 절차 없이 페이지에 접속하는 즉시 캔버스가 열리고, 연필·지우개·채우기·스포이드 같은 기본적인 도트 아트 도구를 바로 사용할 수 있습니다. 완성된 그림은 JPG 또는 배경이 투명한 PNG 파일로 내려받을 수 있어, SNS 프로필이나 메신저 이모티콘, 간단한 게임 리소스 제작 등 다양한 용도로 활용할 수 있습니다.</p>
-      <p>도트프레스의 모든 그리기 작업은 <strong>사용자의 브라우저 내부에서만 처리</strong>됩니다. 그린 그림을 별도의 서버로 전송하거나 저장하지 않으며, 완성한 이미지 파일은 오직 사용자의 기기에만 저장됩니다. 이러한 구조 덕분에 그림 데이터가 외부로 유출될 걱정 없이 안심하고 작업할 수 있습니다.</p>
-      <p>도트프레스는 계속해서 새로운 기능을 추가하며 발전하고 있습니다. 앞으로 레이어 기능, 애니메이션 프레임 미리보기, 다양한 팔레트 프리셋 등 도트 아트 제작에 도움이 되는 기능들을 순차적으로 선보일 예정입니다.</p>
+      <p>도트프레스의 모든 그리기 작업은 <strong>사용자의 브라우저 내부에서만 처리</strong>됩니다. 그린 그림을 별도의 서버로 전송하거나 저장하지 않으며, 완성한 이미지 파일은 오직 사용자의 기기에만 저장됩니다. (다만 이용자가 직접 "갤러리에 공유하기"를 선택한 경우에는 예외적으로 해당 그림이 서버에 저장되어 다른 이용자에게 공개됩니다. 자세한 내용은 <a href="privacy.html">개인정보처리방침</a>을 확인해 주세요.) 이러한 구조 덕분에 공유하지 않는 그림은 외부로 유출될 걱정 없이 안심하고 작업할 수 있습니다.</p>
+      <p>도트프레스는 여러 장의 프레임을 그려 애니메이션 스프라이트를 만들고, 완성한 작품을 커뮤니티 갤러리에 공유해 다른 사람들과 나눌 수 있는 기능까지 지원합니다. 앞으로도 레이어 기능, 다양한 팔레트 프리셋 등 도트 아트 제작에 도움이 되는 기능들을 순차적으로 선보일 예정입니다.</p>
     </div>
   </section>
 
@@ -236,6 +277,7 @@
       <p>브라우저에서 바로 그리는 무료 도트 아트 툴</p>
     </div>
     <nav class="footer-nav">
+      <a href="gallery.html">갤러리</a>
       <a href="about.html">사이트 소개</a>
       <a href="privacy.html">개인정보처리방침</a>
       <a href="#features">기능 소개</a>

@@ -125,19 +125,35 @@
 
   /* ---------------- 크기 / 줌 변경 ---------------- */
 
-  PixelCanvas.prototype.resizeGrid = function (cols, rows) {
-    var oldData = this.data, oldCols = this.cols, oldRows = this.rows;
-    this.cols = cols;
-    this.rows = rows;
-    this.data = new Array(cols * rows).fill(null);
-    var copyW = Math.min(cols, oldCols), copyH = Math.min(rows, oldRows);
+  /**
+   * 격자 크기가 바뀔 때 기존 데이터를 좌상단 기준으로 옮기는 순수 함수.
+   * 프레임이 여러 개인 애니메이션에서, 현재 편집 중이 아닌 다른 프레임의
+   * 데이터를 리사이즈할 때도 이 함수를 그대로 재사용합니다.
+   */
+  PixelCanvas.remapGrid = function (oldData, oldCols, oldRows, newCols, newRows) {
+    var next = new Array(newCols * newRows).fill(null);
+    var copyW = Math.min(newCols, oldCols), copyH = Math.min(newRows, oldRows);
     for (var y = 0; y < copyH; y++) {
       for (var x = 0; x < copyW; x++) {
-        this.data[y * cols + x] = oldData[y * oldCols + x];
+        next[y * newCols + x] = oldData[y * oldCols + x];
       }
     }
+    return next;
+  };
+
+  PixelCanvas.prototype.resizeGrid = function (cols, rows) {
+    this.data = PixelCanvas.remapGrid(this.data, this.cols, this.rows, cols, rows);
+    this.cols = cols;
+    this.rows = rows;
     this.undoStack.length = 0;
     this.redoStack.length = 0;
+    this._resizeCanvasElement();
+  };
+
+  /** cols/rows만 갱신하고 data는 건드리지 않음 - 여러 프레임을 다루는 main.js에서 사용 */
+  PixelCanvas.prototype.setGridDimensions = function (cols, rows) {
+    this.cols = cols;
+    this.rows = rows;
     this._resizeCanvasElement();
   };
 
@@ -204,6 +220,53 @@
       }
     }
     return out.toDataURL(mime, 0.92);
+  };
+
+  /**
+   * 여러 프레임(각각 cols*rows 크기의 색상 배열)을 가로로 이어붙여
+   * 하나의 스프라이트 시트 이미지로 합성합니다.
+   * @param {Array<Array<string|null>>} framesData
+   */
+  PixelCanvas.composeSpriteSheet = function (framesData, cols, rows, scale, mime) {
+    var count = framesData.length;
+    var out = document.createElement("canvas");
+    out.width = cols * scale * count;
+    out.height = rows * scale;
+    var ctx = out.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+
+    if (mime === "image/jpeg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, out.width, out.height);
+    }
+
+    framesData.forEach(function (data, frameIdx) {
+      var offsetX = frameIdx * cols * scale;
+      for (var y = 0; y < rows; y++) {
+        for (var x = 0; x < cols; x++) {
+          var color = data[y * cols + x];
+          if (color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(offsetX + x * scale, y * scale, scale, scale);
+          }
+        }
+      }
+      // 프레임 구분선 (마지막 프레임 제외)
+      if (frameIdx < count - 1) {
+        ctx.strokeStyle = "rgba(128,128,128,0.5)";
+        ctx.beginPath();
+        ctx.moveTo(offsetX + cols * scale + 0.5, 0);
+        ctx.lineTo(offsetX + cols * scale + 0.5, out.height);
+        ctx.stroke();
+      }
+    });
+
+    return out.toDataURL(mime, 0.92);
+  };
+
+  /** 하나의 프레임 데이터 배열로부터 바로 dataURL을 만드는 정적 버전 (공유 업로드용) */
+  PixelCanvas.frameToDataURL = function (data, cols, rows, scale, mime) {
+    return PixelCanvas.composeSpriteSheet([data], cols, rows, scale, mime);
   };
 
   global.PixelCanvas = PixelCanvas;

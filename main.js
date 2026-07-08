@@ -4,6 +4,13 @@
    PixelCanvas 클래스가 담당하고, 이 파일은 화면의 버튼/입력과
    그 클래스를 연결하는 역할만 합니다.
 
+   구조 요약
+   - pc(PixelCanvas)는 항상 "현재 편집 중인 프레임 1장"만 담당합니다.
+   - frames 배열이 전체 애니메이션(여러 프레임)의 실제 데이터를 보관하고,
+     pc.data는 frames[currentFrameIndex].data를 그대로 참조합니다.
+   - 프레임을 추가/복제/삭제/전환/리사이즈할 때는 frames 배열을 조작한 뒤
+     pc.data를 다시 연결해줍니다.
+
    새 도구를 추가하려면:
    1) index.html의 .tool-grid 안에 data-tool="이름" 버튼 추가
    2) applyToolAt() 함수에 분기 추가
@@ -20,11 +27,18 @@
   var BASE_CELL_SIZE = 16; // zoom 100% 기준
   var RECENT_KEY = "dotpress:recentColors";
   var MAX_RECENT = 8;
+  var GALLERY_SHARE_SCALE = 8; // 공유 업로드 시 고정 배율 (용량 관리 목적)
 
   var canvasEl = document.getElementById("pixelCanvas");
   if (!canvasEl) return; // index.html이 아니면 아무 것도 하지 않음
 
   var pc = new PixelCanvas(canvasEl, 32, 32, BASE_CELL_SIZE);
+
+  /* ---------------- 프레임(애니메이션) 상태 ---------------- */
+  var frames = [{ data: pc.data }];
+  var currentFrameIndex = 0;
+  var isPlaying = false;
+  var playTimer = null;
 
   var state = {
     tool: "pencil",
@@ -57,7 +71,18 @@
     applySize: document.getElementById("applySize"),
     exportScale: document.getElementById("exportScale"),
     downloadJpg: document.getElementById("downloadJpg"),
-    downloadPng: document.getElementById("downloadPng")
+    downloadPng: document.getElementById("downloadPng"),
+    downloadSprite: document.getElementById("downloadSprite"),
+    frameList: document.getElementById("frameList"),
+    addFrameBtn: document.getElementById("addFrameBtn"),
+    dupFrameBtn: document.getElementById("dupFrameBtn"),
+    delFrameBtn: document.getElementById("delFrameBtn"),
+    playBtn: document.getElementById("playBtn"),
+    fpsInput: document.getElementById("fpsInput"),
+    shareTitle: document.getElementById("shareTitle"),
+    shareAuthor: document.getElementById("shareAuthor"),
+    shareBtn: document.getElementById("shareBtn"),
+    shareStatus: document.getElementById("shareStatus")
   };
 
   /* ---------------- 초기화 ---------------- */
@@ -66,6 +91,7 @@
   updateHistoryButtons();
   updateHudSize();
   updateHudZoom();
+  renderFrameList();
   pc.render();
 
   /* ---------------- 도구 선택 ---------------- */
@@ -172,6 +198,7 @@
   }
 
   canvasEl.addEventListener("pointerdown", function (e) {
+    if (isPlaying) return;
     e.preventDefault();
     canvasEl.setPointerCapture(e.pointerId);
     var cell = pc.screenToCell(e.clientX, e.clientY);
@@ -190,6 +217,7 @@
       pc.floodFill(cell.x, cell.y, state.color);
       pc.render();
       updateHistoryButtons();
+      refreshCurrentThumbnail();
       return;
     }
 
@@ -201,6 +229,7 @@
   });
 
   canvasEl.addEventListener("pointermove", function (e) {
+    if (isPlaying) return;
     var cell = pc.screenToCell(e.clientX, e.clientY);
     updateHud(cell);
     if (!state.isDrawing || !pc.inBounds(cell.x, cell.y)) return;
@@ -211,6 +240,7 @@
     }
     state.lastCell = cell;
     pc.render();
+    refreshCurrentThumbnail();
   });
 
   function endStroke() {
@@ -230,30 +260,32 @@
   }
 
   el.undoBtn.addEventListener("click", function () {
-    if (pc.undo()) { pc.render(); updateHistoryButtons(); }
+    if (pc.undo()) { pc.render(); updateHistoryButtons(); refreshCurrentThumbnail(); }
   });
   el.redoBtn.addEventListener("click", function () {
-    if (pc.redo()) { pc.render(); updateHistoryButtons(); }
+    if (pc.redo()) { pc.render(); updateHistoryButtons(); refreshCurrentThumbnail(); }
   });
   el.clearBtn.addEventListener("click", function () {
-    if (!window.confirm("캔버스 전체를 지울까요? 이 작업은 실행취소로 되돌릴 수 있습니다.")) return;
+    if (!window.confirm("현재 프레임을 지울까요? 이 작업은 실행취소로 되돌릴 수 있습니다.")) return;
     pc.snapshotForUndo();
     pc.clearAll();
     pc.render();
     updateHistoryButtons();
+    refreshCurrentThumbnail();
   });
 
   document.addEventListener("keydown", function (e) {
     var tag = (e.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "select" || tag === "textarea") return;
+    if (isPlaying) return;
 
     var mod = e.ctrlKey || e.metaKey;
     if (mod && !e.shiftKey && e.key.toLowerCase() === "z") {
       e.preventDefault();
-      if (pc.undo()) { pc.render(); updateHistoryButtons(); }
+      if (pc.undo()) { pc.render(); updateHistoryButtons(); refreshCurrentThumbnail(); }
     } else if ((mod && e.key.toLowerCase() === "y") || (mod && e.shiftKey && e.key.toLowerCase() === "z")) {
       e.preventDefault();
-      if (pc.redo()) { pc.render(); updateHistoryButtons(); }
+      if (pc.redo()) { pc.render(); updateHistoryButtons(); refreshCurrentThumbnail(); }
     } else if (e.key.toLowerCase() === "p") selectTool("pencil");
     else if (e.key.toLowerCase() === "e") selectTool("eraser");
     else if (e.key.toLowerCase() === "b") selectTool("bucket");
@@ -279,19 +311,28 @@
     pc.render();
   });
 
-  /* ---------------- 캔버스 크기 ---------------- */
+  /* ---------------- 캔버스 크기 (모든 프레임에 함께 적용) ---------------- */
   function hasArtwork() {
-    return pc.data.some(function (c) { return c; });
+    return frames.some(function (f) {
+      return f.data.some(function (c) { return c; });
+    });
   }
 
   function doResize(w, h) {
-    if (hasArtwork() && !window.confirm("캔버스 크기를 바꾸면 새 캔버스로 초기화됩니다. 계속할까요?")) {
+    if (hasArtwork() && !window.confirm("캔버스 크기를 바꾸면 모든 프레임이 새 크기로 다시 맞춰집니다. 계속할까요?")) {
       return false;
     }
-    pc.resizeGrid(w, h);
+    frames.forEach(function (f) {
+      f.data = PixelCanvas.remapGrid(f.data, pc.cols, pc.rows, w, h);
+    });
+    pc.setGridDimensions(w, h);
+    pc.data = frames[currentFrameIndex].data;
+    pc.undoStack.length = 0;
+    pc.redoStack.length = 0;
     pc.render();
     updateHudSize();
     updateHistoryButtons();
+    renderFrameList();
     return true;
   }
 
@@ -320,6 +361,139 @@
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
+  /* ---------------- 프레임(애니메이션) ---------------- */
+
+  function selectFrame(idx) {
+    if (isPlaying) stopPlayback();
+    if (idx < 0 || idx >= frames.length) return;
+    currentFrameIndex = idx;
+    pc.data = frames[idx].data;
+    pc.undoStack.length = 0;
+    pc.redoStack.length = 0;
+    updateHistoryButtons();
+    renderFrameList();
+    pc.render();
+  }
+
+  function addFrame() {
+    var newData = new Array(pc.cols * pc.rows).fill(null);
+    var insertAt = currentFrameIndex + 1;
+    frames.splice(insertAt, 0, { data: newData });
+    selectFrame(insertAt);
+  }
+
+  function duplicateFrame() {
+    var copy = frames[currentFrameIndex].data.slice();
+    var insertAt = currentFrameIndex + 1;
+    frames.splice(insertAt, 0, { data: copy });
+    selectFrame(insertAt);
+  }
+
+  function deleteFrame() {
+    if (frames.length <= 1) {
+      window.alert("프레임은 최소 1개가 있어야 합니다.");
+      return;
+    }
+    if (!window.confirm("현재 프레임을 삭제할까요?")) return;
+    frames.splice(currentFrameIndex, 1);
+    selectFrame(Math.min(currentFrameIndex, frames.length - 1));
+  }
+
+  function drawThumbnail(thumbCanvas, data, cols, rows) {
+    var tctx = thumbCanvas.getContext("2d");
+    var w = thumbCanvas.width, h = thumbCanvas.height;
+    tctx.clearRect(0, 0, w, h);
+    var cellW = w / cols, cellH = h / rows;
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var color = data[y * cols + x];
+        if (color) {
+          tctx.fillStyle = color;
+          tctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+        }
+      }
+    }
+  }
+
+  function renderFrameList() {
+    el.frameList.innerHTML = "";
+    frames.forEach(function (frame, idx) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "frame-thumb" + (idx === currentFrameIndex ? " is-active" : "");
+      btn.title = (idx + 1) + "번 프레임";
+
+      var thumbCanvas = document.createElement("canvas");
+      thumbCanvas.width = 40;
+      thumbCanvas.height = 40;
+      drawThumbnail(thumbCanvas, frame.data, pc.cols, pc.rows);
+      btn.appendChild(thumbCanvas);
+
+      var label = document.createElement("span");
+      label.textContent = String(idx + 1);
+      btn.appendChild(label);
+
+      btn.addEventListener("click", function () { selectFrame(idx); });
+      el.frameList.appendChild(btn);
+    });
+  }
+
+  function refreshCurrentThumbnail() {
+    var btn = el.frameList.children[currentFrameIndex];
+    if (!btn) return;
+    var c = btn.querySelector("canvas");
+    if (c) drawThumbnail(c, frames[currentFrameIndex].data, pc.cols, pc.rows);
+  }
+
+  el.addFrameBtn.addEventListener("click", addFrame);
+  el.dupFrameBtn.addEventListener("click", duplicateFrame);
+  el.delFrameBtn.addEventListener("click", deleteFrame);
+
+  /* ---------------- 애니메이션 재생 ---------------- */
+
+  function setEditingEnabled(enabled) {
+    canvasEl.style.pointerEvents = enabled ? "" : "none";
+    [el.addFrameBtn, el.dupFrameBtn, el.delFrameBtn, el.applySize, el.undoBtn, el.redoBtn, el.clearBtn]
+      .forEach(function (b) { if (b) b.disabled = !enabled; });
+    el.sizeBtns.forEach(function (b) { b.disabled = !enabled; });
+    if (enabled) updateHistoryButtons();
+  }
+
+  function startPlayback() {
+    if (isPlaying) return;
+    isPlaying = true;
+    el.playBtn.textContent = "⏸ 정지";
+    setEditingEnabled(false);
+    var playIdx = currentFrameIndex;
+    var fps = clamp(parseInt(el.fpsInput.value, 10) || 8, 1, 30);
+    playTimer = setInterval(function () {
+      playIdx = (playIdx + 1) % frames.length;
+      pc.data = frames[playIdx].data;
+      pc.render();
+      Array.prototype.forEach.call(el.frameList.children, function (child, i) {
+        child.classList.toggle("is-active", i === playIdx);
+      });
+    }, 1000 / fps);
+  }
+
+  function stopPlayback() {
+    if (playTimer) { clearInterval(playTimer); playTimer = null; }
+    isPlaying = false;
+    el.playBtn.textContent = "▶ 재생";
+    setEditingEnabled(true);
+    pc.data = frames[currentFrameIndex].data;
+    pc.render();
+    renderFrameList();
+  }
+
+  el.playBtn.addEventListener("click", function () {
+    if (isPlaying) stopPlayback(); else startPlayback();
+  });
+
+  el.fpsInput.addEventListener("change", function () {
+    if (isPlaying) { stopPlayback(); startPlayback(); }
+  });
+
   /* ---------------- 내보내기 ---------------- */
   function download(dataUrl, filename) {
     var a = document.createElement("a");
@@ -337,5 +511,55 @@
   el.downloadPng.addEventListener("click", function () {
     var scale = parseInt(el.exportScale.value, 10);
     download(pc.toExportDataURL("image/png", scale), "dotpress-artwork.png");
+  });
+  el.downloadSprite.addEventListener("click", function () {
+    var scale = parseInt(el.exportScale.value, 10);
+    var framesData = frames.map(function (f) { return f.data; });
+    var url = PixelCanvas.composeSpriteSheet(framesData, pc.cols, pc.rows, scale, "image/png");
+    download(url, "dotpress-spritesheet.png");
+  });
+
+  /* ---------------- 커뮤니티 갤러리 공유 ---------------- */
+  el.shareBtn.addEventListener("click", function () {
+    if (!hasArtwork()) {
+      el.shareStatus.textContent = "빈 캔버스는 공유할 수 없어요. 먼저 그림을 그려주세요.";
+      return;
+    }
+
+    var title = el.shareTitle.value.trim();
+    var author = el.shareAuthor.value.trim();
+    var framesData = frames.map(function (f) { return f.data; });
+    var imageDataUrl = framesData.length > 1
+      ? PixelCanvas.composeSpriteSheet(framesData, pc.cols, pc.rows, GALLERY_SHARE_SCALE, "image/jpeg")
+      : PixelCanvas.frameToDataURL(framesData[0], pc.cols, pc.rows, GALLERY_SHARE_SCALE, "image/jpeg");
+
+    el.shareBtn.disabled = true;
+    el.shareStatus.textContent = "공유하는 중...";
+
+    fetch("/api/gallery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: title, author: author, imageDataUrl: imageDataUrl })
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (json) {
+          return { ok: res.ok, json: json };
+        });
+      })
+      .then(function (result) {
+        el.shareBtn.disabled = false;
+        if (!result.ok) {
+          var msg = (result.json && result.json.error) ? result.json.error : "알 수 없는 오류가 발생했습니다.";
+          el.shareStatus.textContent = "공유 실패: " + msg;
+          return;
+        }
+        el.shareStatus.textContent = "공유되었습니다! 갤러리 페이지에서 확인해보세요.";
+        el.shareTitle.value = "";
+      })
+      .catch(function (err) {
+        console.error(err);
+        el.shareBtn.disabled = false;
+        el.shareStatus.textContent = "네트워크 오류로 공유하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+      });
   });
 })();
