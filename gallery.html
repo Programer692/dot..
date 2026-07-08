@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>갤러리 | 도트프레스 - 사람들이 공유한 도트 아트 모음</title>
+<meta name="description" content="도트프레스 이용자들이 직접 그려 공유한 도트 아트(픽셀 아트)와 애니메이션 스프라이트를 구경하고 내려받아 사용할 수 있는 커뮤니티 갤러리입니다.">
+<link rel="canonical" href="https://your-domain.com/gallery.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0b0c14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo" aria-label="도트프레스 홈">
+      <span class="logo-mark" aria-hidden="true">▦</span>
+      <span class="logo-text">도트프레스<span class="logo-sub">DOT PRESS</span></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">메뉴 열기</span>
+    </button>
+    <nav class="site-nav" id="siteNav">
+      <a href="index.html#stage">그리기</a>
+      <a href="gallery.html" class="is-current">갤러리</a>
+      <a href="index.html#features">기능 소개</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc-page gallery-page">
+  <h1>커뮤니티 갤러리</h1>
+  <p class="doc-lead">도트프레스 이용자들이 직접 그려서 공유한 도트 아트예요. 마음에 드는 작품은 내려받아 자유롭게 사용해보세요.</p>
+  <p class="hint">※ 여기에 올라온 이미지는 공유한 이용자가 직접 그린 그림이며, 사이트 운영자가 사전 검수하지 않습니다. 부적절한 게시물을 발견하면 카드의 "신고" 버튼을 눌러주세요.</p>
+
+  <div id="galleryStatus" class="gallery-status" role="status" aria-live="polite">불러오는 중...</div>
+  <div id="galleryGrid" class="gallery-grid"></div>
+
+  <div class="gallery-cta">
+    <p>내가 그린 도트 아트도 여기에 올리고 싶다면?</p>
+    <a href="index.html#stage" class="press-start small">▶ 지금 그리러 가기</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark" aria-hidden="true">▦</span> 도트프레스
+      <p>브라우저에서 바로 그리는 무료 도트 아트 툴</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="gallery.html">갤러리</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="index.html#features">기능 소개</a>
+    </nav>
+    <p class="footer-copy">© <span id="yearNow">2026</span> 도트프레스(DOT PRESS). All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="common.js" defer></script>
+<script src="gallery.js" defer></script>
+</body>
+</html>
