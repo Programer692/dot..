@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>도트프레스 | 브라우저에서 바로 그리는 무료 도트 아트(픽셀 아트) 툴</title>
+<meta name="description" content="설치나 회원가입 없이 브라우저에서 바로 도트를 찍고 JPG·PNG로 저장하는 무료 픽셀 아트 툴, 도트프레스. 그림 데이터는 서버로 전송되지 않고 내 브라우저 안에서만 처리됩니다.">
+<meta name="keywords" content="도트 아트, 픽셀 아트, 도트 찍기, 도트 그리기, 무료 그림판, 픽셀아트 메이커, dot art, pixel art maker, 도트프레스">
+<meta name="author" content="도트프레스">
+<link rel="canonical" href="https://your-domain.com/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="도트프레스">
+<meta property="og:title" content="도트프레스 | 브라우저에서 바로 그리는 무료 도트 아트 툴">
+<meta property="og:description" content="설치나 회원가입 없이 도트를 찍고 JPG·PNG로 저장하세요. 모든 작업은 내 브라우저 안에서만 처리됩니다.">
+<meta property="og:url" content="https://your-domain.com/">
+<meta property="og:image" content="https://your-domain.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="도트프레스 | 무료 도트 아트 툴">
+<meta name="twitter:description" content="브라우저에서 바로 도트를 찍고 JPG로 저장하는 무료 픽셀 아트 메이커.">
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0b0c14">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "도트프레스",
+  "alternateName": "DOT PRESS",
+  "url": "https://your-domain.com/",
+  "description": "브라우저에서 바로 도트를 찍고 JPG·PNG로 저장하는 무료 픽셀 아트 메이커. 설치나 회원가입이 필요 없으며 모든 작업은 사용자의 브라우저 안에서만 처리됩니다.",
+  "applicationCategory": "DesignApplication",
+  "operatingSystem": "Any (웹 브라우저)",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "KRW"
+  }
+}
+</script>
+</head>
+<body>
+
+<a class="skip-link" href="#stage">본문(그리기 캔버스)으로 바로가기</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo" aria-label="도트프레스 홈">
+      <span class="logo-mark" aria-hidden="true">▦</span>
+      <span class="logo-text">도트프레스<span class="logo-sub">DOT PRESS</span></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">메뉴 열기</span>
+    </button>
+    <nav class="site-nav" id="siteNav">
+      <a href="#stage">그리기</a>
+      <a href="#features">기능 소개</a>
+      <a href="#about">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== HERO / INSERT COIN ===================== -->
+  <section class="hero">
+    <div class="crt-noise" aria-hidden="true"></div>
+    <p class="eyebrow">FREE · NO SIGN-UP · 100% BROWSER-SIDE</p>
+    <h1 class="hero-title">클릭 한 번, 픽셀 하나.<br>도트 아트를 지금 바로 찍어보세요.</h1>
+    <p class="hero-sub">설치도 회원가입도 필요 없습니다. 원하는 크기의 캔버스를 열고, 색을 고르고, 완성한 도트 그림을 JPG 또는 PNG로 바로 저장하세요. 그림 데이터는 서버에 올라가지 않고 <strong>내 브라우저 안에서만</strong> 처리됩니다.</p>
+    <a href="#stage" class="press-start">▶ PRESS START</a>
+  </section>
+
+  <!-- ===================== STAGE: 그리기 도구 ===================== -->
+  <section class="stage" id="stage" aria-label="도트 아트 그리기 도구">
+    <div class="cabinet">
+
+      <!-- 좌측: 도구 패널 -->
+      <div class="panel panel-left">
+        <div class="panel-block">
+          <h2 class="panel-title">도구</h2>
+          <div class="tool-grid" role="group" aria-label="그리기 도구 선택">
+            <button class="tool-btn is-active" data-tool="pencil" title="연필 (P)">
+              <span class="tool-icon">✎</span><span>연필</span>
+            </button>
+            <button class="tool-btn" data-tool="eraser" title="지우개 (E)">
+              <span class="tool-icon">▢</span><span>지우개</span>
+            </button>
+            <button class="tool-btn" data-tool="bucket" title="채우기 (B)">
+              <span class="tool-icon">◆</span><span>채우기</span>
+            </button>
+            <button class="tool-btn" data-tool="eyedropper" title="스포이드 (I)">
+              <span class="tool-icon">●</span><span>스포이드</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <h2 class="panel-title">색상</h2>
+          <div class="current-color-row">
+            <input type="color" id="colorPicker" value="#4ff0d7" aria-label="사용자 지정 색상 선택">
+            <span class="current-color-label">현재 색상</span>
+          </div>
+          <div class="palette" id="palette" role="group" aria-label="색상 팔레트"></div>
+          <div class="recent-row">
+            <span class="recent-label">최근 사용</span>
+            <div class="recent-colors" id="recentColors"></div>
+          </div>
+        </div>
+
+        <div class="panel-block">
+          <h2 class="panel-title">작업 기록</h2>
+          <div class="btn-row">
+            <button class="btn-ghost" id="undoBtn" title="실행 취소 (Ctrl+Z)">↶ 실행취소</button>
+            <button class="btn-ghost" id="redoBtn" title="다시 실행 (Ctrl+Y)">↷ 다시실행</button>
+          </div>
+          <button class="btn-ghost btn-danger" id="clearBtn">🗑 전체 지우기</button>
+        </div>
+      </div>
+
+      <!-- 중앙: 캔버스 화면 -->
+      <div class="screen-wrap">
+        <div class="screen-bezel">
+          <div class="hud">
+            <span id="hudCoords">X:-- Y:--</span>
+            <span id="hudSize">32×32</span>
+            <span id="hudZoom">ZOOM 100%</span>
+          </div>
+          <div class="canvas-viewport" id="canvasViewport">
+            <canvas id="pixelCanvas" width="512" height="512" aria-label="도트 아트 그리기 캔버스"></canvas>
+          </div>
+          <div class="screen-scanlines" aria-hidden="true"></div>
+        </div>
+        <div class="zoom-row">
+          <button class="btn-ghost small" id="zoomOut" aria-label="축소">－</button>
+          <input type="range" id="zoomRange" min="4" max="40" value="16" aria-label="확대/축소">
+          <button class="btn-ghost small" id="zoomIn" aria-label="확대">＋</button>
+          <label class="grid-toggle">
+            <input type="checkbox" id="gridToggle" checked>
+            <span>격자선</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 우측: 캔버스 설정 + 다운로드 -->
+      <div class="panel panel-right">
+        <div class="panel-block">
+          <h2 class="panel-title">캔버스 크기</h2>
+          <div class="size-presets" role="group" aria-label="캔버스 크기 선택">
+            <button class="size-btn" data-w="16" data-h="16">16×16</button>
+            <button class="size-btn is-active" data-w="32" data-h="32">32×32</button>
+            <button class="size-btn" data-w="48" data-h="48">48×48</button>
+            <button class="size-btn" data-w="64" data-h="64">64×64</button>
+          </div>
+          <div class="custom-size">
+            <label>W <input type="number" id="customW" min="4" max="128" value="32"></label>
+            <label>H <input type="number" id="customH" min="4" max="128" value="32"></label>
+            <button class="btn-ghost small" id="applySize">적용</button>
+          </div>
+          <p class="hint">※ 크기를 바꾸면 새 캔버스로 초기화됩니다.</p>
+        </div>
+
+        <div class="panel-block">
+          <h2 class="panel-title">내보내기</h2>
+          <label class="scale-label">저장 배율
+            <select id="exportScale">
+              <option value="4">4배</option>
+              <option value="8">8배</option>
+              <option value="16" selected>16배</option>
+              <option value="32">32배</option>
+            </select>
+          </label>
+          <button class="btn-primary" id="downloadJpg">⬇ JPG로 저장</button>
+          <button class="btn-secondary" id="downloadPng">⬇ PNG로 저장 (투명 배경)</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="stage-note">그리기 도구 사용법: 캔버스를 클릭하거나 드래그해서 도트를 찍습니다. 모바일에서는 손가락으로 터치해서 그릴 수 있습니다. 작업 중인 그림은 저장 버튼을 누르기 전까지 브라우저 메모리에만 존재하며, 외부 서버로 전송되지 않습니다.</p>
+  </section>
+
+  <!-- ===================== 기능 소개 ===================== -->
+  <section class="features" id="features">
+    <h2 class="section-title"><span class="section-eyebrow">FEATURES</span>기능 소개</h2>
+    <div class="stage-cards">
+      <article class="stage-card">
+        <span class="stage-num">STAGE 1</span>
+        <h3>클릭 한 번, 도트 한 칸</h3>
+        <p>16×16부터 64×64, 원하는 크기까지 자유롭게 캔버스를 만들고 실시간 미리보기와 함께 도트를 찍습니다. 확대·축소 슬라이더로 세밀한 작업도 가능합니다.</p>
+      </article>
+      <article class="stage-card">
+        <span class="stage-num">STAGE 2</span>
+        <h3>채우기 &amp; 스포이드</h3>
+        <p>넓은 영역은 채우기 도구로 한 번에 칠하고, 이미 사용한 색은 스포이드로 그대로 다시 사용하세요. 최근 사용한 색상은 자동으로 기록됩니다.</p>
+      </article>
+      <article class="stage-card">
+        <span class="stage-num">STAGE 3</span>
+        <h3>실행취소 &amp; 다시실행</h3>
+        <p>실수해도 걱정 없습니다. 단축키(Ctrl+Z / Ctrl+Y)와 버튼으로 언제든 이전 작업으로 되돌리거나 다시 실행할 수 있습니다.</p>
+      </article>
+      <article class="stage-card">
+        <span class="stage-num">STAGE 4</span>
+        <h3>JPG·PNG 즉시 저장</h3>
+        <p>완성한 도트 아트를 4배~32배 고해상도로 확대해 JPG 또는 투명 배경 PNG 파일로 바로 다운로드합니다. 변환 과정도 전부 브라우저 안에서 처리됩니다.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== 사이트 소개 ===================== -->
+  <section class="about" id="about">
+    <h2 class="section-title"><span class="section-eyebrow">ABOUT</span>사이트 소개</h2>
+    <div class="about-body">
+      <p><strong>도트프레스(DOT PRESS)</strong>는 누구나 별도의 프로그램 설치나 회원가입 없이, 웹 브라우저만으로 도트 아트(픽셀 아트)를 그릴 수 있도록 만든 무료 온라인 그리기 도구입니다. 오래된 콘솔 게임과 아케이드 화면 특유의 거친 매력을 좋아하는 분들, 이모티콘·아이콘·게임 스프라이트를 직접 만들어보고 싶은 분들, 그리고 픽셀 단위로 그림을 그리는 재미를 처음 느껴보고 싶은 분들을 위해 만들어졌습니다.</p>
+      <p>복잡한 설치 과정이나 로그인 절차 없이 페이지에 접속하는 즉시 캔버스가 열리고, 연필·지우개·채우기·스포이드 같은 기본적인 도트 아트 도구를 바로 사용할 수 있습니다. 완성된 그림은 JPG 또는 배경이 투명한 PNG 파일로 내려받을 수 있어, SNS 프로필이나 메신저 이모티콘, 간단한 게임 리소스 제작 등 다양한 용도로 활용할 수 있습니다.</p>
+      <p>도트프레스의 모든 그리기 작업은 <strong>사용자의 브라우저 내부에서만 처리</strong>됩니다. 그린 그림을 별도의 서버로 전송하거나 저장하지 않으며, 완성한 이미지 파일은 오직 사용자의 기기에만 저장됩니다. 이러한 구조 덕분에 그림 데이터가 외부로 유출될 걱정 없이 안심하고 작업할 수 있습니다.</p>
+      <p>도트프레스는 계속해서 새로운 기능을 추가하며 발전하고 있습니다. 앞으로 레이어 기능, 애니메이션 프레임 미리보기, 다양한 팔레트 프리셋 등 도트 아트 제작에 도움이 되는 기능들을 순차적으로 선보일 예정입니다.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark" aria-hidden="true">▦</span> 도트프레스
+      <p>브라우저에서 바로 그리는 무료 도트 아트 툴</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="#features">기능 소개</a>
+    </nav>
+    <p class="footer-copy">© <span id="yearNow">2026</span> 도트프레스(DOT PRESS). All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="common.js" defer></script>
+<script src="pixelCanvas.js" defer></script>
+<script src="main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "도트프레스 - 무료 도트 아트 그리기 툴",
+  "short_name": "도트프레스",
+  "description": "브라우저에서 바로 도트를 찍고 JPG·PNG로 저장하는 무료 픽셀 아트 메이커",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0c14",
+  "theme_color": "#0b0c14",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

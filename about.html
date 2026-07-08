@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사이트 소개 | 도트프레스 - 무료 도트 아트 그리기 툴</title>
+<meta name="description" content="도트프레스는 설치나 회원가입 없이 브라우저에서 바로 도트 아트를 그릴 수 있는 무료 웹 그리기 도구입니다. 서비스 소개와 만든 이유, 사용 방법을 안내합니다.">
+<link rel="canonical" href="https://your-domain.com/about.html">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0b0c14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo" aria-label="도트프레스 홈">
+      <span class="logo-mark" aria-hidden="true">▦</span>
+      <span class="logo-text">도트프레스<span class="logo-sub">DOT PRESS</span></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+      <span class="sr-only">메뉴 열기</span>
+    </button>
+    <nav class="site-nav" id="siteNav">
+      <a href="index.html#stage">그리기</a>
+      <a href="index.html#features">기능 소개</a>
+      <a href="about.html" class="is-current">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </nav>
+  </div>
+</header>
+
+<main class="doc-page">
+  <h1>사이트 소개</h1>
+  <p class="doc-lead">도트프레스(DOT PRESS)는 브라우저에서 바로 도트 아트(픽셀 아트)를 그릴 수 있는 무료 웹 서비스입니다.</p>
+
+  <h2>어떤 서비스인가요</h2>
+  <p>도트프레스는 별도의 프로그램 설치나 회원가입 절차 없이, 웹 브라우저 주소창에 접속하는 것만으로 도트 아트를 그릴 수 있도록 만든 온라인 그리기 도구입니다. 16×16의 작은 캔버스부터 64×64, 또는 사용자가 직접 지정한 크기까지 자유롭게 캔버스를 만들고, 연필·지우개·채우기·스포이드 도구로 원하는 그림을 완성할 수 있습니다. 완성된 그림은 JPG 또는 배경이 투명한 PNG 이미지 파일로 내려받아 바로 활용할 수 있습니다.</p>
+
+  <h2>왜 만들었나요</h2>
+  <p>도트 아트는 제한된 해상도와 색상 안에서 이미지를 표현하는 독특한 매력을 가진 그림 형식입니다. 예전 콘솔 게임과 아케이드 화면 특유의 감성을 좋아하는 사람들, 이모티콘이나 아이콘, 게임 스프라이트를 직접 만들어보고 싶은 사람들에게는 진입 장벽이 낮으면서도 결과물이 명확하게 보이는 재미있는 창작 활동입니다. 하지만 기존의 도트 아트 프로그램들은 설치가 필요하거나 사용법이 복잡한 경우가 많았습니다. 도트프레스는 이런 불편함 없이 누구나 즉시 도트 아트를 그려볼 수 있도록 하기 위해 만들어졌습니다.</p>
+
+  <h2>이런 분들께 추천합니다</h2>
+  <ul class="doc-list">
+    <li>SNS 프로필이나 메신저용 이모티콘을 직접 만들어보고 싶은 분</li>
+    <li>간단한 게임 스프라이트나 아이콘 소스가 필요한 인디 게임 개발자</li>
+    <li>도트 아트를 처음 배워보고 싶은 학생이나 그림 입문자</li>
+    <li>설치형 프로그램 없이 가볍게 픽셀 그림을 그려보고 싶은 누구나</li>
+  </ul>
+
+  <h2>어떻게 동작하나요</h2>
+  <p>도트프레스의 모든 그리기 기능은 자바스크립트로 구현되어 사용자의 브라우저 안에서 직접 실행됩니다. 캔버스에 그린 그림 데이터는 어떠한 외부 서버로도 전송되지 않으며, 페이지를 새로고침하거나 닫으면 저장하지 않은 작업 내용은 사라집니다. 완성한 그림을 저장하고 싶다면 화면 우측의 저장 버튼을 눌러 JPG 또는 PNG 파일로 다운로드하면 됩니다. 자세한 개인정보 처리 방식은 <a href="privacy.html">개인정보처리방침</a> 페이지에서 확인하실 수 있습니다.</p>
+
+  <h2>앞으로의 계획</h2>
+  <p>도트프레스는 계속해서 기능을 추가하며 발전해 나갈 예정입니다. 레이어 기능, 애니메이션 프레임 미리보기, 다양한 색상 팔레트 프리셋, 그림 불러오기 기능 등을 순차적으로 준비하고 있습니다. 서비스 이용 중 궁금한 점이나 제안하고 싶은 기능이 있다면 언제든 알려주세요.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-mark" aria-hidden="true">▦</span> 도트프레스
+      <p>브라우저에서 바로 그리는 무료 도트 아트 툴</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="index.html#features">기능 소개</a>
+    </nav>
+    <p class="footer-copy">© <span id="yearNow">2026</span> 도트프레스(DOT PRESS). All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="common.js" defer></script>
+</body>
+</html>
